@@ -9,6 +9,8 @@ image:https://img.shields.io/bitbucket/pipelines/daggerok/spring-cloud-gateway-e
 //tag::content[]
 __Migrate monolithic app into micro-services with awesome Spring projects!__
 
+Read link:https://daggerok.github.io/spring-cloud-gateway-example[reference documentation] for details
+
 .gradle
 [source,bash]
 ----
