@@ -61,17 +61,17 @@ script:
 - http :8001/api/contents
 - stop_any 8001 80 8001 80 8002 80 8002 80
 
-# run and test monolith+gateway apps using docker-compose gradle task
-- bash gradlew composeUp
-- http :8001
-- http :8001/actuator/health
-- http :8001/api/
-- http :8001/api/contents
-- http :8002
-- http :8002/actuator/health
-- http :8002/api/
-- http :8002/api/contents
-- bash gradlew composeDown
+## run and test monolith+gateway apps using docker-compose gradle task
+#- bash gradlew composeUp
+#- http :8001
+#- http :8001/actuator/health
+#- http :8001/api/
+#- http :8001/api/contents
+#- http :8002
+#- http :8002/actuator/health
+#- http :8002/api/
+#- http :8002/api/contents
+#- bash gradlew composeDown
 
 before_deploy: "./gradlew documentation"
 deploy:
