@@ -1,4 +1,4 @@
-= spring-cloud-gateway-example
+= spring-cloud-gateway-example image:https://travis-ci.org/daggerok/spring-cloud-gateway-example.svg?branch=master["Build Status", link="https://travis-ci.org/daggerok/spring-cloud-gateway-example"]
 
 ////
 image:https://travis-ci.org/daggerok/spring-cloud-gateway-example.svg?branch=master["Build Status", link="https://travis-ci.org/daggerok/spring-cloud-gateway-example"]

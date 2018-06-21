@@ -12,6 +12,6 @@ out
 Thumbs.db
 /public/
 *.db
-src/main/public/
+*/src/main/resources/public/*
 node_modules/
 package-lock.json
