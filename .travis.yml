@@ -21,25 +21,29 @@ before_script:
 - sudo pip install docker-compose httpie >/dev/null 2>&1
 - source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
 - stop_any 8001 80 8001 80
+
 script:
 - bash gradlew >/dev/null
-- java -jar ./build/libs/*.jar &
+- java -jar ./monolith/build/libs/*.jar &
 - wait_for 8001
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
 - stop_any 8001 80 8001 80
-- bash ./build/libs/*.jar &
+#
+- bash ./monolith/build/libs/*.jar &
 - wait_for 8001
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
 - stop_any 8001 80 8001 80
+#
 - bash gradlew composeUp
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
 - bash gradlew composeDown
+
 before_deploy: "./gradlew documentation"
 deploy:
   provider: pages
@@ -50,6 +54,7 @@ deploy:
     branch: master
   local-dir: public
   target_branch: gh-pages
+
 before_cache:
 - sudo rm -rf $HOME/.gradle/caches/4.8/fileHashes/fileHashes.bin
 - sudo rm -rf $HOME/.gradle/caches/4.8/fileHashes/fileHashes.lock
