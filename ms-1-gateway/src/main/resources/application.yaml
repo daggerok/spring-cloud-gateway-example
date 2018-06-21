@@ -1,0 +1,55 @@
+spring:
+  profiles:
+    include:
+    - props
+    - server
+    - spring-boot
+    - actuator
+    - loging
+---
+spring:
+  profiles:
+    active: server
+server:
+  port: ${props.gateway.port}
+---
+spring:
+  profiles:
+    active: spring-boot
+  application:
+    name: gateway
+  output:
+    ansi:
+      enabled: always
+  thymeleaf:
+    prefix: classpath:/public/
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+---
+spring:
+  profiles:
+    active: actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        exclude: '*'
+    jmx:
+      exposure:
+        exclude: '*'
+  endpoint:
+    health:
+      show-details: WHEN_AUTHORIZED
+    shutdown:
+      enabled: false
+---
+spring:
+  profiles:
+    active: logging
+logging:
+  level:
+    org.springframework.cloud.gateway: 'TRACE'
+    org.springframework.jdbc: 'DEBUG'

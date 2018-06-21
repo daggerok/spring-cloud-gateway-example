@@ -1,0 +1,43 @@
+version: '2.1'
+
+services:
+
+  monolith:
+    restart: unless-stopped
+    build:
+      context: ./ms-0-monolith
+      dockerfile: ./Dockerfile
+    volumes: ['monolith-data:/home/appuser']
+    ports: ['8001:8001']
+    networks:
+      public-net:
+        aliases:
+          - m
+          - monolith
+
+  gateway:
+    restart: unless-stopped
+    build:
+      context: ./ms-1-gateway
+      dockerfile: ./Dockerfile
+    volumes: ['gateway-data:/home/appuser']
+    ports: ['8002:8002']
+    depends_on:
+      monolith:
+        condition: service_healthy
+    links:
+      - 'monolith:monolith'
+    environment:
+      PROPS_MONOLITH_HOST: 'monolith'
+    networks:
+      public-net:
+        aliases:
+          - g
+          - gateway
+
+volumes:
+  monolith-data: {}
+  gateway-data: {}
+
+networks:
+  public-net:

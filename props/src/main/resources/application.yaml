@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    include:
+    - spring-boot
+    - props
+---
+spring:
+  profiles:
+    active: spring-boot
+  application:
+    name: props
+  output:
+    ansi:
+      enabled: always

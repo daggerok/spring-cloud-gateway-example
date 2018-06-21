@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: props
+props:
+  monolith:
+    proto: http
+    host: 127.0.0.1
+    port: 8001
+    url: ${props.monolith.proto}://${props.monolith.host}:${props.monolith.port}
+  gateway:
+    proto: http
+    host: 127.0.0.1
+    port: 8002
+    url: ${props.gateway.proto}://${props.gateway.host}:${props.gateway.port}

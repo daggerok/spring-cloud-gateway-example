@@ -1,5 +1,6 @@
 buildscript {
   ext {
+    springCloudGatewayVersion = '2.0.0.RELEASE'
     javaVersion = JavaVersion.VERSION_1_8
     springBootVersion = '2.0.3.RELEASE'
     springCloudVersion = 'Finchley.RC1'
@@ -7,6 +8,9 @@ buildscript {
     logbackVersion = '1.2.3'
     slf4jVersion = '1.7.25'
     vavrVersion = '0.9.2'
+
+    nodeVersion = '8.11.3'
+    npmVersion = '6.1.0'
 
     phantomjsDriverVersion = '1.4.4'
     seleniumDriverVersion = '3.12.0'

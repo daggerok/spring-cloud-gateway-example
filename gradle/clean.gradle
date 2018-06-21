@@ -16,7 +16,10 @@ allprojects {
         project.file("$rootDir/dist"),
         project.file('allure-report'),
         project.file('allure-results'),
-        project.file("$rootDir/monolith/src/main/resources/public"),
+        project.file("$rootDir/ms-2-ui/src/main/js/node_modules"),
+        project.file("$rootDir/ms-2-ui/src/main/resources/public"),
+        project.file("$rootDir/ms-0-monolith/src/main/js/node_modules"),
+        project.file("$rootDir/ms-0-monolith/src/main/resources/public"),
     ].each { delete it }
     // rm -rf $(find . -name 'ajcore.*.txt')
     delete fileTree(rootDir).matching {
