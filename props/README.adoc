@@ -1,5 +1,15 @@
 = props image:https://travis-ci.org/daggerok/spring-cloud-gateway-example.svg?branch=master["Build Status", link="https://travis-ci.org/daggerok/spring-cloud-gateway-example"]
 
 //tag::content[]
-This module contains all apps props.
+
+=== props
+
+This module contains all apps props, such as applications url, port, host, etc...
+
+.configurations example file: `application-props.yaml`
+[source,yaml]
+----
+include::./src/test/resources/application-props.yaml[]
+----
+
 //end::content[]

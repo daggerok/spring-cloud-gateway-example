@@ -1,11 +1,21 @@
 = monolith image:https://travis-ci.org/daggerok/spring-cloud-gateway-example.svg?branch=master["Build Status", link="https://travis-ci.org/daggerok/spring-cloud-gateway-example"]
 
 //tag::content[]
-=== step 1
+
+=== step 1: gateway
 
 This is a first step in micro-services migration process.
 First of all we need create entry point of our future system -- application gateway.
 Gateway will forward any requests to proper services of your system.
 
 Gateway server is using port: 8002
+
+.gateway routes configuration:
+[source,java]
+----
+include::./src/main/java/daggerok/gateway/GatewayApplication.java[tags=content]
+----
+
+this configuration shows how we can forward every request to monolith (except itself actuator requests)
+
 //end::content[]

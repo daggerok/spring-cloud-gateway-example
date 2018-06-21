@@ -1,11 +1,13 @@
 = monolith image:https://travis-ci.org/daggerok/spring-cloud-gateway-example.svg?branch=master["Build Status", link="https://travis-ci.org/daggerok/spring-cloud-gateway-example"]
 
 //tag::content[]
-=== step 0
+
+=== step 0: monolith
 
 This is a zero step.
 We will try migrate that monolith app, which is contains:
 `ui` and few `rest api data` modules into micro-services apps.
 
 Monolith server is using port: 8001
+
 //end::content[]

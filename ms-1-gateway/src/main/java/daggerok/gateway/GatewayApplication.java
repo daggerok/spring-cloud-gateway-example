@@ -19,6 +19,8 @@ import org.springframework.context.annotation.Import;
 @ComponentScan(basePackageClasses = GatewayAutoConfiguration.class)
 class GatewayRoutesConfig {
 
+  //@formatter:off
+  //tag::content[]
   final PropsAutoConfiguration.Props props;
 
   @Bean
@@ -26,19 +28,23 @@ class GatewayRoutesConfig {
     return builder
         .routes()
 
-        // step 2: oops, gateway actuator endpoints should respond by themselves, but not with monolith's...
-        .route("self", p -> p
+        /*
+        // step 1.1: forward everything to monolith app
+        .route("monolith", p -> p
+            .path("/**")
+            .uri(props.getMonolith().getUrl()))
+        */
+
+        // step 1.2: oops, gateway actuator endpoints should respond by themselves, but not with monolith's...
+        .route("self-actuator", p -> p
             .path("/actuator/**")
             .negate()
             .uri(props.getMonolith().getUrl()))
 
-        // step 1: forward everything to monolith app
-        .route("monolith", p -> p
-            .path("/**")
-            .uri(props.getMonolith().getUrl()))
-
         .build();
   }
+  //end::content[]
+  //@formatter:on
 }
 
 @Import({
