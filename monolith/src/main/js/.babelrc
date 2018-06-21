@@ -1,0 +1,24 @@
+{
+  "presets": [
+    "react",
+    "stage-0",
+    [
+      "env",
+      {
+        "debug": false,
+        "targets": {
+          "browsers": [
+            "last 2 versions",
+            "safari >= 7",
+            "chrome >= 52",
+            "firefox >= 48"
+          ]
+        }
+      }
+    ]
+  ],
+  "plugins": [
+    "transform-runtime",
+    "syntax-dynamic-import"
+  ]
+}

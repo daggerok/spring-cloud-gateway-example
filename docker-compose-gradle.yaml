@@ -1,0 +1,19 @@
+version: "2.1"
+
+services:
+
+  monolith-app:
+    build:
+      context: ./monolith
+      dockerfile: ./Dockerfile.gradle
+    volumes: ["monolith-app-data:/home/appuser"]
+    ports: ["8001:8001"]
+    networks: [backing-services]
+    restart: unless-stopped
+
+volumes:
+  monolith-app-data: {}
+
+networks:
+  backing-services:
+    driver: bridge

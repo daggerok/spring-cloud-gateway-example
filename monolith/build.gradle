@@ -1,0 +1,43 @@
+apply plugin: 'cn.bestwu.propdeps'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+compileJava.dependsOn processResources
+
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter-webflux'
+  implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+  implementation 'org.springframework.boot:spring-boot-starter-actuator'
+  runtime 'org.springframework.boot:spring-boot-devtools'
+
+  annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+  testAnnotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+  runtime 'com.h2database:h2'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation 'io.projectreactor:reactor-test'
+}
+
+dependencyManagement {
+  imports {
+    mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
+    mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+  }
+}
+
+bootJar {
+  launchScript()
+}
+
+apply plugin: 'com.moowork.node'
+
+node {
+  download = true
+  version = '8.11.3'
+  npmVersion = '6.1.0'
+  nodeModulesDir = project.file("$projectDir/src/main/js")
+}
+
+processResources.dependsOn npm_run_build

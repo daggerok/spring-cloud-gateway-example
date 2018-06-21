@@ -1,0 +1,52 @@
+def profile = 'gradle'
+def dockerComposeFile = project.file("$rootDir/docker-compose-${profile}.yaml")
+
+if (project.hasProperty('profile')) {
+  profile = project.property('profile') ?: ''
+  if (!profile.trim().isEmpty()) {
+    dockerComposeFile = dockerComposeFile.replace('-gradle.yaml', "-${profile}.yaml")
+  }
+}
+
+apply plugin: 'com.avast.gradle.docker-compose'
+
+dockerCompose {
+  useComposeFiles = [dockerComposeFile]
+  // captureContainersOutput = true
+  captureContainersOutput = false
+  stopContainers = true
+  removeContainers = true
+  removeImages = 'Local'
+  removeVolumes = true
+  removeOrphans = true
+  forceRecreate = true
+  waitForTcpPorts = false
+  projectName = project.name
+}
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
+if ('maven' == profile) {
+
+  Task mavenBuild = tasks.create(name: 'mavenBuild', type: Exec) {
+
+    def script = "$rootDir/mvnw"
+    def isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
+    def command = (
+        isWindows
+            ? ['cmd', '/c', "${script}.cmd"]
+            : ['bash', '-x', script]
+    ) + ['-f', "$rootDir/pon.xml", '-U', 'clean', 'package']
+
+    commandLine command
+    workingDir rootDir
+  }
+
+  composeUp.dependsOn mavenBuild
+  composeUp.shouldRunAfter mavenBuild
+}
+
+else {
+  composeUp.dependsOn assemble
+  composeUp.shouldRunAfter clean, assemble
+}

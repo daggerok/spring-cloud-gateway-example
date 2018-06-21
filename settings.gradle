@@ -1,0 +1,4 @@
+rootProject.name = 'spring-cloud-gateway-example'
+enableFeaturePreview 'STABLE_PUBLISHING'
+include 'monolith'
+include 'docs'
