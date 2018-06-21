@@ -23,25 +23,54 @@ before_script:
 - stop_any 8001 80 8001 80
 
 script:
+
+# build
 - bash gradlew >/dev/null
-- java -jar ./monolith/build/libs/*.jar &
+
+# run and test monolith app using java -jar
+- java -jar ./ms-0-monolith/build/libs/*.jar &
 - wait_for 8001
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
 - stop_any 8001 80 8001 80
-#
-- bash ./monolith/build/libs/*.jar &
+
+# run and test monolith app using bash
+- bash ./ms-0-monolith/build/libs/*.jar &
 - wait_for 8001
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
 - stop_any 8001 80 8001 80
-#
+
+# run and test monolith+gateway apps using java -jar
+- java -jar ./ms-0-monolith/build/libs/*.jar &
+- java -jar ./ms-1-gateway/build/libs/*.jar &
+- wait_for 8001 8002
+- http :8001
+- http :8001/api/
+- http :8001/api/contents
+- stop_any 8001 80 8001 80 8002 80 8002 80
+
+# run and test monolith+gateway apps using bash
+- bash ./ms-0-monolith/build/libs/*.jar &
+- bash ./ms-1-gateway/build/libs/*.jar &
+- wait_for 8001 8002
+- http :8001
+- http :8001/api/
+- http :8001/api/contents
+- stop_any 8001 80 8001 80 8002 80 8002 80
+
+# run and test monolith+gateway apps using docker-compose gradle task
 - bash gradlew composeUp
 - http :8001
+- http :8001/actuator/health
 - http :8001/api/
 - http :8001/api/contents
+- http :8002
+- http :8002/actuator/health
+- http :8002/api/
+- http :8002/api/contents
 - bash gradlew composeDown
 
 before_deploy: "./gradlew documentation"
