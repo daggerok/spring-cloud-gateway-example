@@ -559,7 +559,7 @@ table.CodeRay td.code>pre{padding:0}
 <span id="author" class="author">Maksim Kostromin</span><br>
 <span id="email" class="email"><a href="mailto:daggerok@gmail.com">daggerok@gmail.com</a></span><br>
 <span id="revnumber">version 0.0.1,</span>
-<span id="revdate">2018-06-22 01:53:08 UTC</span>
+<span id="revdate">2018-06-22 10:27:02 UTC</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -656,6 +656,11 @@ bash build/libs/monolith/*.jar
     <span class="key">proto</span>: <span class="string"><span class="content">http</span></span>
     <span class="key">host</span>: <span class="string"><span class="content">127.0.0.1</span></span>
     <span class="key">port</span>: <span class="string"><span class="content">8002</span></span>
+    <span class="key">url</span>: <span class="string"><span class="content">${props.gateway.proto}://${props.gateway.host}:${props.gateway.port}</span></span>
+  <span class="key">ui</span>:
+    <span class="key">proto</span>: <span class="string"><span class="content">http</span></span>
+    <span class="key">host</span>: <span class="string"><span class="content">127.0.0.1</span></span>
+    <span class="key">port</span>: <span class="string"><span class="content">8003</span></span>
     <span class="key">url</span>: <span class="string"><span class="content">${props.gateway.proto}://${props.gateway.host}:${props.gateway.port}</span></span></code></pre>
 </div>
 </div>
@@ -711,6 +716,9 @@ Gateway will forward any requests to proper services of your system.</p>
 <div class="paragraph">
 <p>this configuration shows how we can forward every request to monolith (except itself actuator requests)</p>
 </div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::../../ms-3-ui/README.adoc[tags=content]</p>
+</div>
 </div>
 </div>
 </div>
@@ -736,7 +744,7 @@ Gateway will forward any requests to proper services of your system.</p>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1<br>
-Last updated 2018-06-22 01:53:08 UTC
+Last updated 2018-06-22 10:27:02 UTC
 </div>
 </div>
 </body>
