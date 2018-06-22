@@ -29,7 +29,7 @@ script:
 - bash gradlew >/dev/null
 
 # run and test monolith app using java -jar
-- java -jar ./ms-0-monolith/build/libs/*.jar &
+- java -jar ./ms-0-monolith/build/libs/*-0.0.1.jar &
 - wait_for 8001
 - http :8001
 - http :8001/api/
@@ -37,7 +37,7 @@ script:
 - stop_any 8001 80 8001 80
 
 # run and test monolith app using bash
-- bash ./ms-0-monolith/build/libs/*.jar &
+- bash ./ms-0-monolith/build/libs/*-0.0.1.jar &
 - wait_for 8001
 - http :8001
 - http :8001/api/
@@ -45,8 +45,8 @@ script:
 - stop_any 8001 80 8001 80
 
 # run and test monolith+gateway apps using java -jar
-- java -jar ./ms-0-monolith/build/libs/*.jar &
-- java -jar ./ms-1-gateway/build/libs/*.jar &
+- java -jar ./ms-0-monolith/build/libs/*-0.0.1.jar &
+- java -jar ./ms-1-gateway/build/libs/*-0.0.1.jar &
 - wait_for 8001 8002
 - http :8001
 - http :8001/api/
@@ -54,8 +54,8 @@ script:
 - stop_any 8001 80 8001 80 8002 80 8002 80
 
 # run and test monolith+gateway apps using bash
-- bash ./ms-0-monolith/build/libs/*.jar &
-- bash ./ms-1-gateway/build/libs/*.jar &
+- bash ./ms-0-monolith/build/libs/*-0.0.1.jar &
+- bash ./ms-1-gateway/build/libs/*-0.0.1.jar &
 - wait_for 8001 8002
 - http :8001
 - http :8001/api/
