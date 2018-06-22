@@ -1,0 +1,22 @@
+version: '2.1'
+
+services:
+
+  monolith:
+    restart: unless-stopped
+    build:
+      context: ./ms-0-monolith
+      dockerfile: ./Dockerfile
+    volumes: ['monolith-data:/home/appuser']
+    ports: ['8001:8001']
+    networks:
+      public-net:
+        aliases:
+          - m
+          - monolith
+
+volumes:
+  monolith-data: {}
+
+networks:
+  public-net:
