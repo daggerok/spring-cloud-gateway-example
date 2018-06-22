@@ -10,6 +10,18 @@ In this module we moved all UI related stuff:
 - SPA index thymeleaf controller
 - API forwarder to gateway (to avoid frontend CORS issue)
 
+.SPA Index Page thymeleaf controller:
+[source,java]
+----
+include::./src/main/java/daggerok/ui/UIApplication.java[tags=index-spa]
+----
+
+.WebFlux REST API proxy forwarder config:
+[source,java]
+----
+include::./src/main/java/daggerok/ui/UIApplication.java[tags=proxy-api]
+----
+
 UI is using port: 8003
 
 //end::content[]

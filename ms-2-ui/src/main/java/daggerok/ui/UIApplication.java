@@ -11,23 +11,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.RouterFunction;
 
-import java.util.List;
 import java.util.Map;
 
-import static org.springframework.http.HttpMethod.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RouterFunctions.resources;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
+//tag::index-spa[]
 @Controller
 @RequiredArgsConstructor
 class IndexPage {
@@ -37,12 +34,14 @@ class IndexPage {
     return "index";
   }
 }
+//end::index-spa[]
 
 ///*
+//tag::proxy-api[]
 @Log4j2
 @Configuration
 @RequiredArgsConstructor
-class WebfluxRoutesConfig {
+class RestApiProxyConfig {
 
   final Props props;
 
@@ -76,6 +75,7 @@ class WebfluxRoutesConfig {
     );
   }
 }
+//end::proxy-api[]
 //*/
 
 @Import({

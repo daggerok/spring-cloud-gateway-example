@@ -1,0 +1,7 @@
+.gradle
+out
+src
+build.gradle
+README.adoc
+*.db
+.DS_Store

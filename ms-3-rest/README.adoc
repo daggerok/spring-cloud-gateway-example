@@ -1,0 +1,24 @@
+= rest api data service image:https://travis-ci.org/daggerok/spring-cloud-gateway-example.svg?branch=master["Build Status", link="https://travis-ci.org/daggerok/spring-cloud-gateway-example"]
+
+//tag::content[]
+
+=== step 3: rest
+
+Last part of our application is REST API.
+We gonna split webflux rest api from monolith into separate service.
+
+.spring-data:
+[source,java]
+----
+include::./src/main/java/daggerok/rest/RestApplication.java[tags=spring-data]
+----
+
+.WebFlux REST API:
+[source,java]
+----
+include::./src/main/java/daggerok/rest/RestApplication.java[tags=rest-api]
+----
+
+Rest server is using port: 8004
+
+//end::content[]

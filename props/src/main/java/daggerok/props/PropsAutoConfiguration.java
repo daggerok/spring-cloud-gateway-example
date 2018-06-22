@@ -17,7 +17,7 @@ public class PropsAutoConfiguration {
   @ConfigurationProperties(prefix = "props")
   public static class Props {
 
-    private App monolith, gateway, ui;
+    private App monolith, gateway, ui, rest;
 
     @Data
     @NoArgsConstructor

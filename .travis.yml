@@ -48,7 +48,8 @@ script:
 - java -jar ./ms-0-monolith/build/libs/*-0.0.1.jar &
 - java -jar ./ms-1-gateway/build/libs/*-0.0.1.jar &
 - java -jar ./ms-2-ui/build/libs/*-0.0.1.jar &
-- wait_for 8001 8002 8003
+- java -jar ./ms-3-rest/build/libs/*-0.0.1.jar &
+- wait_for 8001 8002 8003 8004
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
@@ -61,13 +62,18 @@ script:
 - http :8003/api/
 - http :8003/api/contents
 - http :8003/actuator/health
-- stop_any 8001 8002 8003 80
+- http :8004/
+- http :8004/actuator/health
+- http :8004/api/contents
+- http :8004/api/
+- stop_any 8001 8002 8003 8004 80
 
 # run and test monolith+gateway apps using bash
 - bash ./ms-0-monolith/build/libs/*-0.0.1.jar &
 - bash ./ms-1-gateway/build/libs/*-0.0.1.jar &
 - bash ./ms-2-ui/build/libs/*-0.0.1.jar &
-- wait_for 8001 8002 8003
+- bash ./ms-3-rest/build/libs/*-0.0.1.jar &
+- wait_for 8001 8002 8003 8004
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
@@ -80,11 +86,15 @@ script:
 - http :8003/api/
 - http :8003/api/contents
 - http :8003/actuator/health
-- stop_any 8001 8002 8003 80
+- http :8004/
+- http :8004/actuator/health
+- http :8004/api/contents
+- http :8004/api/
+- stop_any 8001 8002 8003 8004 80
 
 # run and test monolith+gateway apps using docker-compose gradle task
 - bash gradlew assemble composeUp
-- wait_for 8001 8002 8003
+- wait_for 8001 8002 8003 8004
 - http :8001/
 - http :8001/actuator/health
 - http :8001/api/
@@ -97,8 +107,12 @@ script:
 - http :8003/actuator/health
 - http :8003/api/contents
 - http :8003/api/
+- http :8004/
+- http :8004/actuator/health
+- http :8004/api/contents
+- http :8004/api/
 - bash gradlew composeDown
-- stop_any 8001 8002 80
+- stop_any 8001 8002 8003 8004 80
 
 before_deploy: "./gradlew documentation"
 deploy:
@@ -121,8 +135,9 @@ cache:
   - "$HOME/.m2"
   - "$HOME/.gradle"
   - "props/.gradle"
-  - "/home/travis/.m2"
-  - "/home/travis/.gradle"
-  - "ms-1-gateway/.gradle"
   - "ms-0-monolith/.gradle"
   - "ms-0-monolith/src/main/js/node_modules"
+  - "ms-1-gateway/.gradle"
+  - "ms-2-ui/src/main/js/node_modules"
+  - "ms-2-ui/.gradle"
+  - "ms-3-rest/.gradle"

@@ -22,6 +22,12 @@ include::../../props/README.adoc[tags=content]
 include::../../ms-0-monolith/README.adoc[tags=content]
 include::../../ms-1-gateway/README.adoc[tags=content]
 include::../../ms-3-ui/README.adoc[tags=content]
+include::../../ms-4-rest/README.adoc[tags=content]
+
+== Post implementation steps:
+- remove monolith `self-actuator` gateway route
+- remove `ms-0-monolith` project
+- remove useless configurations from `props` module
 
 == Links
 ifdef::backend-html5[- link:./index.pdf[Documentation in PFD format]]

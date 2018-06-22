@@ -28,18 +28,29 @@ class GatewayRoutesConfig {
     return builder
         .routes()
 
-        /*
-        // step 1.1: forward everything to monolith app
+        // step 4: forward rest api calls to ms-3-rest micro-service
+        .route("ms-3-rest", p -> p
+            .path("/api/**")
+            .uri(props.getRest().getUrl()))
+
+        // step 3: everything else (except itself gateway actuator endpoints) forward to ms-2-ui micro-service
+        .route("self-actuator", p -> p
+            .path("/actuator/**")
+            .negate()
+            .uri(props.getUi().getUrl()))
+
+        /* // monolithic app at this point of time could be completely disabled - after step 4 migration is done.
+        // step 1: forward everything to monolith app
         .route("monolith", p -> p
             .path("/**")
             .uri(props.getMonolith().getUrl()))
-        */
 
-        // step 1.2: oops, gateway actuator endpoints should respond by themselves, but not with monolith's...
+        // step 2: oops, gateway actuator endpoints should respond by themselves, but not with monolith's...
         .route("self-actuator", p -> p
             .path("/actuator/**")
             .negate()
             .uri(props.getMonolith().getUrl()))
+        */
 
         .build();
   }

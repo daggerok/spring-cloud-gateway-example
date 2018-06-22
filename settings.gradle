@@ -1,7 +1,7 @@
 rootProject.name = 'spring-cloud-gateway-example'
 enableFeaturePreview 'STABLE_PUBLISHING'
-include 'docs'
-include 'props'
-include 'ms-0-monolith'
-include 'ms-1-gateway'
-include 'ms-2-ui'
+include 'docs', 'props',
+    'ms-0-monolith',
+    'ms-1-gateway',
+    'ms-2-ui',
+    'ms-3-rest'

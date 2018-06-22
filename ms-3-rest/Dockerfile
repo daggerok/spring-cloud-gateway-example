@@ -25,8 +25,8 @@ ARG JAVA_OPTS_ARGS='\
 ENV JAVA_OPTS="${JAVA_OPTS} ${JAVA_OPTS_ARGS}"
 ENTRYPOINT java ${JAVA_OPTS} -jar ./app.jar
 CMD /bin/bash
-EXPOSE 8001
+EXPOSE 8004
 HEALTHCHECK --timeout=1s \
             --retries=66 \
-            CMD curl -f http://127.0.0.1:8001/actuator/health || exit 1
+            CMD curl -f http://127.0.0.1:8004/actuator/health || exit 1
 COPY --chown=appuser ./build/libs/*.jar ./app.jar

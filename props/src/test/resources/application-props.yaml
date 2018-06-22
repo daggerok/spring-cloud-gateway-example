@@ -16,4 +16,9 @@ props:
     proto: http
     host: 127.0.0.1
     port: 8003
-    url: ${props.gateway.proto}://${props.gateway.host}:${props.gateway.port}
+    url: ${props.ui.proto}://${props.ui.host}:${props.ui.port}
+  rest:
+    proto: http
+    host: 127.0.0.1
+    port: 8004
+    url: ${props.rest.proto}://${props.rest.host}:${props.rest.port}
