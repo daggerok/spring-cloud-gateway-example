@@ -20,8 +20,9 @@ install: true
 before_script:
 - sudo pip install docker-compose httpie >/dev/null 2>&1
 - source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
-- non_sudo_stop_any 8001 80 8001 80
+- stop_any 8001 80 8001 80
 
+script:
 script:
 
 # build
@@ -33,7 +34,7 @@ script:
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
-- non_sudo_stop_any 8001 80 8001 80
+- stop_any 8001 80 8001 80
 
 # run and test monolith app using bash
 - bash ./ms-0-monolith/build/libs/*.jar &
@@ -41,7 +42,7 @@ script:
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
-- non_sudo_stop_any 8001 80 8001 80
+- stop_any 8001 80 8001 80
 
 # run and test monolith+gateway apps using java -jar
 - java -jar ./ms-0-monolith/build/libs/*.jar &
@@ -50,7 +51,7 @@ script:
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
-- non_sudo_stop_any 8001 80 8001 80 8002 80 8002 80
+- stop_any 8001 80 8001 80 8002 80 8002 80
 
 # run and test monolith+gateway apps using bash
 - bash ./ms-0-monolith/build/libs/*.jar &
@@ -59,7 +60,7 @@ script:
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
-- non_sudo_stop_any 8001 80 8001 80 8002 80 8002 80
+- stop_any 8001 80 8001 80 8002 80 8002 80
 
 ## run and test monolith+gateway apps using docker-compose gradle task
 #- bash gradlew composeUp
