@@ -64,11 +64,11 @@ script:
 
 # run and test monolith+gateway apps using docker-compose gradle task
 - bash gradlew composeUp
-- http :8001
+- http :8001/
 - http :8001/actuator/health
 - http :8001/api/
 - http :8001/api/contents
-- http :8002
+- http :8002/
 - http :8002/actuator/health
 - http :8002/api/
 - http :8002/api/contents
@@ -94,7 +94,9 @@ cache:
   - ".gradle"
   - "$HOME/.m2"
   - "$HOME/.gradle"
-  - "ms-0-monolith/.gradle"
-  - "ms-1-gateway/.gradle"
   - "props/.gradle"
+  - "/home/travis/.m2"
+  - "/home/travis/.gradle"
+  - "ms-1-gateway/.gradle"
+  - "ms-0-monolith/.gradle"
   - "ms-0-monolith/src/main/js/node_modules"
