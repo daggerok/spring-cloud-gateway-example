@@ -559,7 +559,7 @@ table.CodeRay td.code>pre{padding:0}
 <span id="author" class="author">Maksim Kostromin</span><br>
 <span id="email" class="email"><a href="mailto:daggerok@gmail.com">daggerok@gmail.com</a></span><br>
 <span id="revnumber">version 0.0.1,</span>
-<span id="revdate">2018-06-22 12:40:14 UTC</span>
+<span id="revdate">2018-06-22 18:43:49 UTC</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -570,6 +570,8 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#props">2.1. props</a></li>
 <li><a href="#step-0-monolith">2.2. step 0: monolith</a></li>
 <li><a href="#step-1-gateway">2.3. step 1: gateway</a></li>
+<li><a href="#step-2-ui">2.4. step 2: ui</a></li>
+<li><a href="#step-3-rest">2.5. step 3: rest</a></li>
 </ul>
 </li>
 <li><a href="#post-implementation-steps">3. Post implementation steps:</a></li>
@@ -733,9 +735,162 @@ Gateway will forward any requests to proper services of your system.</p>
 <div class="paragraph">
 <p>this configuration shows how we can forward every request to monolith (except itself actuator requests)</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="step-2-ui"><a class="anchor" href="#step-2-ui"></a>2.4. step 2: ui</h3>
 <div class="paragraph">
-<p>Unresolved directive in index.adoc - include::../../ms-3-ui/README.adoc[tags=content]
-Unresolved directive in index.adoc - include::../../ms-4-rest/README.adoc[tags=content]</p>
+<p>In this module we moved all UI related stuff:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>react frontend app</p>
+</li>
+<li>
+<p>SPA index thymeleaf controller</p>
+</li>
+<li>
+<p>API forwarder to gateway (to avoid frontend CORS issue)</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">SPA Index Page thymeleaf controller:</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Controller</span>
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="type">class</span> <span class="class">IndexPage</span> {
+
+  <span class="annotation">@GetMapping</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>)
+  <span class="predefined-type">String</span> index() {
+    <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">index</span><span class="delimiter">&quot;</span></span>;
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">WebFlux REST API proxy forwarder config:</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Log4j2</span>
+<span class="annotation">@Configuration</span>
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="type">class</span> <span class="class">RestApiProxyConfig</span> {
+
+  <span class="directive">final</span> Props props;
+
+  <span class="annotation">@Bean</span>
+  WebClient webClient() {
+    <span class="keyword">return</span> WebClient.create(props.getMonolith().getUrl());
+  }
+
+  <span class="annotation">@Bean</span>
+  RouterFunction routes(WebClient webClient) {
+
+    <span class="directive">final</span> ParameterizedTypeReference&lt;<span class="predefined-type">Map</span>&gt; maps = <span class="keyword">new</span> ParameterizedTypeReference&lt;<span class="predefined-type">Map</span>&gt;() {};
+    <span class="directive">final</span> ParameterizedTypeReference&lt;<span class="predefined-type">String</span>&gt; strings = <span class="keyword">new</span> ParameterizedTypeReference&lt;<span class="predefined-type">String</span>&gt;() {};
+
+    <span class="keyword">return</span> route(
+        GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api/contents</span><span class="delimiter">&quot;</span></span>),
+        request -&gt; ok().contentType(APPLICATION_JSON).body(webClient
+            .get().uri(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api/contents</span><span class="delimiter">&quot;</span></span>)
+            .accept(APPLICATION_JSON)
+            .header(<span class="string"><span class="delimiter">&quot;</span><span class="content">Content-Type</span><span class="delimiter">&quot;</span></span>, APPLICATION_JSON_VALUE)
+            .retrieve().bodyToFlux(maps), maps)
+    ).andRoute(
+        GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api/**</span><span class="delimiter">&quot;</span></span>),
+        request -&gt; ok().contentType(APPLICATION_JSON).body(webClient
+            .get().uri(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api/</span><span class="delimiter">&quot;</span></span>)
+            .accept(APPLICATION_JSON)
+            .header(<span class="string"><span class="delimiter">&quot;</span><span class="content">Content-Type</span><span class="delimiter">&quot;</span></span>, APPLICATION_JSON_VALUE)
+            .retrieve().bodyToFlux(strings), strings)
+    ).andOther(
+        resources(<span class="string"><span class="delimiter">&quot;</span><span class="content">/**</span><span class="delimiter">&quot;</span></span>, <span class="keyword">new</span> ClassPathResource(<span class="string"><span class="delimiter">&quot;</span><span class="content">public/</span><span class="delimiter">&quot;</span></span>))
+    );
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>UI is using port: 8003</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="step-3-rest"><a class="anchor" href="#step-3-rest"></a>2.5. step 3: rest</h3>
+<div class="paragraph">
+<p>Last part of our application is REST API.
+We gonna split webflux rest api from monolith into separate service.</p>
+</div>
+<div class="listingblock">
+<div class="title">spring-data:</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Data</span>
+<span class="annotation">@Entity</span>
+<span class="annotation">@NoArgsConstructor</span>
+<span class="annotation">@Accessors</span>(chain = <span class="predefined-constant">true</span>)
+<span class="type">class</span> <span class="class">Content</span> <span class="directive">implements</span> <span class="predefined-type">Serializable</span> {
+
+  <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="type">long</span> serialVersionUID = -<span class="integer">7618202574843387015L</span>;
+
+  <span class="annotation">@Id</span>
+  <span class="annotation">@GeneratedValue</span>(generator = <span class="string"><span class="delimiter">&quot;</span><span class="content">uuid</span><span class="delimiter">&quot;</span></span>)
+  <span class="annotation">@GenericGenerator</span>(name = <span class="string"><span class="delimiter">&quot;</span><span class="content">uuid</span><span class="delimiter">&quot;</span></span>, strategy = <span class="string"><span class="delimiter">&quot;</span><span class="content">uuid2</span><span class="delimiter">&quot;</span></span>)
+  <span class="predefined-type">String</span> id;
+
+  <span class="predefined-type">String</span> body;
+}
+
+<span class="type">interface</span> <span class="class">Contents</span> <span class="directive">extends</span> JpaRepository&lt;Content, <span class="predefined-type">String</span>&gt; {}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">WebFlux REST API:</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Log4j2</span>
+<span class="annotation">@Configuration</span>
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="type">class</span> <span class="class">WebfluxRoutesConfig</span> {
+
+  <span class="directive">final</span> Contents contents;
+
+  <span class="annotation">@Bean</span>
+  RouterFunction routes() {
+    <span class="keyword">return</span>
+        nest(
+            path(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api</span><span class="delimiter">&quot;</span></span>),
+            route(
+                GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/contents</span><span class="delimiter">&quot;</span></span>),
+                contentsHandler()
+            )
+        ).andRoute(
+            GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/**</span><span class="delimiter">&quot;</span></span>),
+            fallbackHandler()
+        )
+        ;
+  }
+
+  <span class="annotation">@Bean</span>
+  HandlerFunction&lt;ServerResponse&gt; contentsHandler() {
+    <span class="keyword">return</span> request -&gt; {
+      <span class="directive">final</span> Flux&lt;Content&gt; publisher = Flux.fromIterable(contents.findAll());
+      <span class="directive">final</span> ParameterizedTypeReference&lt;Content&gt; type = <span class="keyword">new</span> ParameterizedTypeReference&lt;Content&gt;() {};
+      <span class="keyword">return</span> ok().body(publisher, type);
+    };
+  }
+
+  <span class="annotation">@Bean</span>
+  HandlerFunction&lt;ServerResponse&gt; fallbackHandler() {
+    <span class="keyword">return</span> request -&gt; {
+      <span class="directive">final</span> ParameterizedTypeReference&lt;<span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;&gt; type = <span class="keyword">new</span> ParameterizedTypeReference&lt;<span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;&gt;() {};
+      <span class="directive">final</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; api = singletonList(<span class="string"><span class="delimiter">&quot;</span><span class="content">GET contents -&gt; /api/contents</span><span class="delimiter">&quot;</span></span>);
+      <span class="directive">final</span> Mono&lt;<span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;&gt; publisher = Mono.just(api);
+      <span class="keyword">return</span> ok().body(publisher, type);
+    };
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Rest server is using port: 8004</p>
 </div>
 </div>
 </div>
@@ -780,7 +935,7 @@ Unresolved directive in index.adoc - include::../../ms-4-rest/README.adoc[tags=c
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1<br>
-Last updated 2018-06-22 12:40:14 UTC
+Last updated 2018-06-22 18:43:49 UTC
 </div>
 </div>
 </body>
