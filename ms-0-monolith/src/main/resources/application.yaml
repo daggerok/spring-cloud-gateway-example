@@ -30,12 +30,13 @@ spring:
     active: actuator
 management:
   endpoints:
-    web:
-      exposure:
-        exclude: '*'
     jmx:
       exposure:
         exclude: '*'
+    web:
+      exposure:
+        include:
+        - health
   endpoint:
     health:
       show-details: WHEN_AUTHORIZED

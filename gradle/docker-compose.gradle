@@ -47,6 +47,7 @@ if ('maven' == profile) {
 }
 
 else {
-  composeUp.dependsOn assemble
-  composeUp.shouldRunAfter clean, assemble
+  def assembleTasks = allprojects*.tasks*.assemble
+  composeUp.dependsOn assembleTasks
+  composeUp.shouldRunAfter([clean] + assembleTasks)
 }

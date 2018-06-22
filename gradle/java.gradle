@@ -5,7 +5,7 @@ allprojects {
   group = 'com.github.daggerok'
   sourceCompatibility = targetCompatibility = "$javaVersion"
 
-  defaultTasks 'build', 'publish'
+  defaultTasks 'build'
 
   dependencies {
     // In java we trust...
