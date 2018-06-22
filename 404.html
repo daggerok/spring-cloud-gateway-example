@@ -559,7 +559,7 @@ table.CodeRay td.code>pre{padding:0}
 <span id="author" class="author">Maksim Kostromin</span><br>
 <span id="email" class="email"><a href="mailto:daggerok@gmail.com">daggerok@gmail.com</a></span><br>
 <span id="revnumber">version 0.0.1,</span>
-<span id="revdate">2018-06-22 10:27:02 UTC</span>
+<span id="revdate">2018-06-22 12:40:14 UTC</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -572,7 +572,8 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#step-1-gateway">2.3. step 1: gateway</a></li>
 </ul>
 </li>
-<li><a href="#links">3. Links</a></li>
+<li><a href="#post-implementation-steps">3. Post implementation steps:</a></li>
+<li><a href="#links">4. Links</a></li>
 </ul>
 </div>
 </div>
@@ -661,7 +662,12 @@ bash build/libs/monolith/*.jar
     <span class="key">proto</span>: <span class="string"><span class="content">http</span></span>
     <span class="key">host</span>: <span class="string"><span class="content">127.0.0.1</span></span>
     <span class="key">port</span>: <span class="string"><span class="content">8003</span></span>
-    <span class="key">url</span>: <span class="string"><span class="content">${props.gateway.proto}://${props.gateway.host}:${props.gateway.port}</span></span></code></pre>
+    <span class="key">url</span>: <span class="string"><span class="content">${props.ui.proto}://${props.ui.host}:${props.ui.port}</span></span>
+  <span class="key">rest</span>:
+    <span class="key">proto</span>: <span class="string"><span class="content">http</span></span>
+    <span class="key">host</span>: <span class="string"><span class="content">127.0.0.1</span></span>
+    <span class="key">port</span>: <span class="string"><span class="content">8004</span></span>
+    <span class="key">url</span>: <span class="string"><span class="content">${props.rest.proto}://${props.rest.host}:${props.rest.port}</span></span></code></pre>
 </div>
 </div>
 </div>
@@ -696,18 +702,29 @@ Gateway will forward any requests to proper services of your system.</p>
     <span class="keyword">return</span> builder
         .routes()
 
-        <span class="comment">/*
-        // step 1.1: forward everything to monolith app
-        .route(&quot;monolith&quot;, p -&gt; p
-            .path(&quot;/**&quot;)
-            .uri(props.getMonolith().getUrl()))
-        */</span>
+        <span class="comment">// step 4: forward rest api calls to ms-3-rest micro-service</span>
+        .route(<span class="string"><span class="delimiter">&quot;</span><span class="content">ms-3-rest</span><span class="delimiter">&quot;</span></span>, p -&gt; p
+            .path(<span class="string"><span class="delimiter">&quot;</span><span class="content">/api/**</span><span class="delimiter">&quot;</span></span>)
+            .uri(props.getRest().getUrl()))
 
-        <span class="comment">// step 1.2: oops, gateway actuator endpoints should respond by themselves, but not with monolith's...</span>
+        <span class="comment">// step 3: everything else (except itself gateway actuator endpoints) forward to ms-2-ui micro-service</span>
         .route(<span class="string"><span class="delimiter">&quot;</span><span class="content">self-actuator</span><span class="delimiter">&quot;</span></span>, p -&gt; p
             .path(<span class="string"><span class="delimiter">&quot;</span><span class="content">/actuator/**</span><span class="delimiter">&quot;</span></span>)
             .negate()
+            .uri(props.getUi().getUrl()))
+
+        <span class="comment">/* // monolithic app at this point of time could be completely disabled - after step 4 migration is done.
+        // step 1: forward everything to monolith app
+        .route(&quot;monolith&quot;, p -&gt; p
+            .path(&quot;/**&quot;)
             .uri(props.getMonolith().getUrl()))
+
+        // step 2: oops, gateway actuator endpoints should respond by themselves, but not with monolith's...
+        .route(&quot;self-actuator&quot;, p -&gt; p
+            .path(&quot;/actuator/**&quot;)
+            .negate()
+            .uri(props.getMonolith().getUrl()))
+        */</span>
 
         .build();
   }</code></pre>
@@ -717,13 +734,32 @@ Gateway will forward any requests to proper services of your system.</p>
 <p>this configuration shows how we can forward every request to monolith (except itself actuator requests)</p>
 </div>
 <div class="paragraph">
-<p>Unresolved directive in index.adoc - include::../../ms-3-ui/README.adoc[tags=content]</p>
+<p>Unresolved directive in index.adoc - include::../../ms-3-ui/README.adoc[tags=content]
+Unresolved directive in index.adoc - include::../../ms-4-rest/README.adoc[tags=content]</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="links"><a class="anchor" href="#links"></a>3. Links</h2>
+<h2 id="post-implementation-steps"><a class="anchor" href="#post-implementation-steps"></a>3. Post implementation steps:</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>remove monolith <code>self-actuator</code> gateway route</p>
+</li>
+<li>
+<p>remove <code>ms-0-monolith</code> project</p>
+</li>
+<li>
+<p>remove useless configurations from <code>props</code> module</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="links"><a class="anchor" href="#links"></a>4. Links</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
@@ -744,7 +780,7 @@ Gateway will forward any requests to proper services of your system.</p>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1<br>
-Last updated 2018-06-22 10:27:02 UTC
+Last updated 2018-06-22 12:40:14 UTC
 </div>
 </div>
 </body>
