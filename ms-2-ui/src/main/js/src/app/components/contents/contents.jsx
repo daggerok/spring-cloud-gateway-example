@@ -24,10 +24,10 @@ export class Contents extends Component {
   render() {
     return <div>
       {
-        this.state.contents.map((innerHTML, key) =>
+        this.state.contents.map((json, key) =>
           <pre key={key}>
             <code className={'json'}
-                  dangerouslySetInnerHTML={{__html: JSON.stringify(innerHTML, null, 2)}}/>
+                  dangerouslySetInnerHTML={{__html: JSON.stringify(json, null, 2)}}/>
           </pre>
         )
       }

@@ -1,0 +1,15 @@
+= ui image:https://travis-ci.org/daggerok/spring-cloud-gateway-example.svg?branch=master["Build Status", link="https://travis-ci.org/daggerok/spring-cloud-gateway-example"]
+
+//tag::content[]
+
+=== step 2: ui
+
+In this module we moved all UI related stuff:
+
+- react frontend app
+- SPA index thymeleaf controller
+- API forwarder to gateway (to avoid frontend CORS issue)
+
+UI is using port: 8003
+
+//end::content[]

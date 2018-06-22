@@ -1,0 +1,53 @@
+addons:
+  apt:
+    update: true
+    sources:
+    - google-chrome
+    packages:
+    - wget
+    - libappindicator1
+    - fonts-liberation
+    - google-chrome-stable
+
+install: true
+before_script:
+## setting the path for phantom.js 2.0.0
+#- export PATH=/usr/local/phantomjs-2.0.0/bin:$PATH
+- export CHROME_BIN=/usr/bin/google-chrome
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+#- wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+#- sudo dpkg -i google-chrome*.deb >/dev/null 2>&1
+
+language: node_js
+node_js: lts/*
+
+script:
+- npm i
+- npm run dev
+- npm run build
+
+cache:
+  npm: true
+  yarn: true
+  directories:
+  - node_modules
+
+env:
+  global:
+  - TERM=dumb
+  # GITHUB_TOKEN:
+  - secure: v8tTVAVGNaP0cFh/fmwyxwVdW3gfzfTdYsAWJPhiTBoTgGsrZHqXJpZb4oqmYhnFF/LSLt3eTriIIMsAzkXMzk/+80kUDMVNMGBkXEK1NTyoFuskL6zOjFjUzyhG70C8BC9kiHAV+vHBwLHwCWsAcKGUlYW0HMZJsnEBTuz8QxLMEPZdec/yvu/df7b8Z+Zs105EUTUVrxuqFMM9XVehoimXX9p2DLT7gvJHndJNzlmjoGm0CpAI43JLdELe3HeDSeNGfqH74P0yfNZUU2Q+/BPMSJC6L9KBytzTM0AcV1FXR7uNOCBnBeYuKAvy4Vs9rXHJRZtXpObtsLzHZIVJa60ZXK9FwJh6SCTklNiU6VKslF9v/gkNi6x7S4LKN4Znmtbknlifljcd9JMizwBE1SEn9KbmbSNLKY1PtQPnejuWb5AMBNE3afo+1axkTrQV9l8XVzsr6IkiE4c8qb/OsSNup9DMu8ahz1Zcak7uWZMzd95aGONtyCX8lMkVw7+9US00UNrW4Z+Lzj+fhBJCqaB9zD+02RmCmdpPNp/TzrjQpRVKGxMO089FveAQUSW+Z29S1/veUcFP2lL2VvQAikky5Dz5Yf3yp9bH2Zop1Q8kprsCGzM8Jx3RRqbXkYds7kNhPSfLq1JLWMLbqTm5pxUONJC4x+CgwqWN9T+vFvc=
+
+before_deploy:
+- npm run predeploy
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: "$GITHUB_TOKEN"
+  keep-history: true
+  on:
+    branch: master
+  local-dir: dist
+  target_branch: gh-pages

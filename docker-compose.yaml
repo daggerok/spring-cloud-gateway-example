@@ -35,9 +35,34 @@ services:
           - g
           - gateway
 
+  ui:
+    restart: unless-stopped
+    build:
+      context: ./ms-2-ui
+      dockerfile: ./Dockerfile
+    volumes: ['ui-data:/home/appuser']
+    ports: ['8003:8003']
+    depends_on:
+      monolith:
+        condition: service_healthy
+      gateway:
+        condition: service_healthy
+    links:
+      - 'monolith:monolith'
+      - 'gateway:gateway'
+    environment:
+      PROPS_MONOLITH_HOST: 'monolith'
+      PROPS_GATEWAY_HOST: 'gateway'
+    networks:
+      public-net:
+        aliases:
+          - u
+          - ui
+
 volumes:
   monolith-data: {}
   gateway-data: {}
+  ui-data: {}
 
 networks:
   public-net:

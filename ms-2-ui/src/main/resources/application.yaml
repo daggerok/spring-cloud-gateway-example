@@ -6,19 +6,19 @@ spring:
     - spring-boot
     - spring-cloud
     - actuator
-    - loging
+    - logging
 ---
 spring:
   profiles:
     active: server
 server:
-  port: ${props.gateway.port}
+  port: ${props.ui.port}
 ---
 spring:
   profiles:
     active: spring-boot
   application:
-    name: gateway
+    name: ui
   output:
     ansi:
       enabled: always
@@ -58,7 +58,4 @@ management:
 spring:
   profiles:
     active: logging
-logging:
-  level:
-    org.springframework.cloud.gateway: 'TRACE'
-    org.springframework.jdbc: 'DEBUG'
+logging.level.org.springframework.web: 'DEBUG'

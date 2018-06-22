@@ -28,43 +28,63 @@ script:
 # build
 - bash gradlew >/dev/null
 
-# run and test monolith app using java -jar
-- java -jar ./ms-0-monolith/build/libs/*-0.0.1.jar &
-- wait_for 8001
-- http :8001
-- http :8001/api/
-- http :8001/api/contents
-- stop_any 8001 80
-
-# run and test monolith app using bash
-- bash ./ms-0-monolith/build/libs/*-0.0.1.jar &
-- wait_for 8001
-- http :8001
-- http :8001/api/
-- http :8001/api/contents
-- stop_any 8001 80
+## run and test monolith app using java -jar
+#- java -jar ./ms-0-monolith/build/libs/*-0.0.1.jar &
+#- wait_for 8001
+#- http :8001
+#- http :8001/api/
+#- http :8001/api/contents
+#- stop_any 8001 80
+#
+## run and test monolith app using bash
+#- bash ./ms-0-monolith/build/libs/*-0.0.1.jar &
+#- wait_for 8001
+#- http :8001
+#- http :8001/api/
+#- http :8001/api/contents
+#- stop_any 8001 80
 
 # run and test monolith+gateway apps using java -jar
 - java -jar ./ms-0-monolith/build/libs/*-0.0.1.jar &
 - java -jar ./ms-1-gateway/build/libs/*-0.0.1.jar &
-- wait_for 8001 8002
+- java -jar ./ms-2-ui/build/libs/*-0.0.1.jar &
+- wait_for 8001 8002 8003
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
-- stop_any 8001 8002 80
+- http :8001/actuator/health
+- http :8002
+- http :8002/api/
+- http :8002/api/contents
+- http :8002/actuator/health
+- http :8003
+- http :8003/api/
+- http :8003/api/contents
+- http :8003/actuator/health
+- stop_any 8001 8002 8003 80
 
 # run and test monolith+gateway apps using bash
 - bash ./ms-0-monolith/build/libs/*-0.0.1.jar &
 - bash ./ms-1-gateway/build/libs/*-0.0.1.jar &
-- wait_for 8001 8002
+- bash ./ms-2-ui/build/libs/*-0.0.1.jar &
+- wait_for 8001 8002 8003
 - http :8001
 - http :8001/api/
 - http :8001/api/contents
-- stop_any 8001 8002 80
+- http :8001/actuator/health
+- http :8002
+- http :8002/api/
+- http :8002/api/contents
+- http :8002/actuator/health
+- http :8003
+- http :8003/api/
+- http :8003/api/contents
+- http :8003/actuator/health
+- stop_any 8001 8002 8003 80
 
 # run and test monolith+gateway apps using docker-compose gradle task
 - bash gradlew assemble composeUp
-- wait_for 8001 8002
+- wait_for 8001 8002 8003
 - http :8001/
 - http :8001/actuator/health
 - http :8001/api/
@@ -73,6 +93,10 @@ script:
 - http :8002/actuator/health
 - http :8002/api/
 - http :8002/api/contents
+- http :8003/
+- http :8003/actuator/health
+- http :8003/api/contents
+- http :8003/api/
 - bash gradlew composeDown
 - stop_any 8001 8002 80
 

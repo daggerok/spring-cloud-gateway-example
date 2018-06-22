@@ -1,0 +1,16 @@
+= blogdag-react image:https://travis-ci.org/daggerok/webpack-markdown-react-blog.svg?branch=master["Build Status", link="https://travis-ci.org/daggerok/webpack-markdown-react-blog"]
+
+link:https://daggerok.github.io/webpack-markdown-react-blog[GitHub Pages deployment]
+
+using:
+
+- react
+- webpack 4
+- markdown-loader
+- highlight.js
+
+----
+git remote -v
+origin  git@github.com:daggerok/webpack-markdown-react-blog.git (fetch)
+origin  git@github.com:daggerok/webpack-markdown-react-blog.git (push)
+----
