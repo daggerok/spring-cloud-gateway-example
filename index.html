@@ -559,13 +559,19 @@ table.CodeRay td.code>pre{padding:0}
 <span id="author" class="author">Maksim Kostromin</span><br>
 <span id="email" class="email"><a href="mailto:daggerok@gmail.com">daggerok@gmail.com</a></span><br>
 <span id="revnumber">version 0.0.1,</span>
-<span id="revdate">2018-06-21 01:52:28 UTC</span>
+<span id="revdate">2018-06-22 01:07:04 UTC</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#introduction">1. Introduction</a></li>
-<li><a href="#implementation">2. Implementation</a></li>
+<li><a href="#implementation">2. Implementation</a>
+<ul class="sectlevel2">
+<li><a href="#props">2.1. props</a></li>
+<li><a href="#step-0-monolith">2.2. step 0: monolith</a></li>
+<li><a href="#step-1-gateway">2.3. step 1: gateway</a></li>
+</ul>
+</li>
 <li><a href="#links">3. Links</a></li>
 </ul>
 </div>
@@ -616,6 +622,9 @@ bash build/libs/monolith/*.jar
 <li>
 <p><a href="https://www.youtube.com/watch?v=NkgooKSeF8w">Motivated by that Spencer Gibb talk on YouTube: Introducing Spring Cloud Gateway by Spencer Gibb @ Spring I/O 2018</a></p>
 </li>
+<li>
+<p><a href="https://www.youtube.com/watch?v=lW3aN-7izCY&amp;t=0s">YouTube: Mastering Spring Boot&#8217;s Actuator by Andy Wilkinson @ Spring I/O 2018</a></p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -626,8 +635,82 @@ bash build/libs/monolith/*.jar
 <div class="sect1">
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>2. Implementation</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="props"><a class="anchor" href="#props"></a>2.1. props</h3>
 <div class="paragraph">
-<p>TODO: implement documentation&#8230;&#8203;</p>
+<p>This module contains all apps props, such as applications url, port, host, etc&#8230;&#8203;</p>
+</div>
+<div class="listingblock">
+<div class="title">configurations example file: <code>application-props.yaml</code></div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">spring</span>:
+  <span class="key">profiles</span>:
+    <span class="key">active</span>: <span class="string"><span class="content">props</span></span>
+<span class="key">props</span>:
+  <span class="key">monolith</span>:
+    <span class="key">proto</span>: <span class="string"><span class="content">http</span></span>
+    <span class="key">host</span>: <span class="string"><span class="content">127.0.0.1</span></span>
+    <span class="key">port</span>: <span class="string"><span class="content">8001</span></span>
+    <span class="key">url</span>: <span class="string"><span class="content">${props.monolith.proto}://${props.monolith.host}:${props.monolith.port}</span></span>
+  <span class="key">gateway</span>:
+    <span class="key">proto</span>: <span class="string"><span class="content">http</span></span>
+    <span class="key">host</span>: <span class="string"><span class="content">127.0.0.1</span></span>
+    <span class="key">port</span>: <span class="string"><span class="content">8002</span></span>
+    <span class="key">url</span>: <span class="string"><span class="content">${props.gateway.proto}://${props.gateway.host}:${props.gateway.port}</span></span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="step-0-monolith"><a class="anchor" href="#step-0-monolith"></a>2.2. step 0: monolith</h3>
+<div class="paragraph">
+<p>This is a zero step.
+We will try migrate that monolith app, which is contains:
+<code>ui</code> and few <code>rest api data</code> modules into micro-services apps.</p>
+</div>
+<div class="paragraph">
+<p>Monolith server is using port: 8001</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="step-1-gateway"><a class="anchor" href="#step-1-gateway"></a>2.3. step 1: gateway</h3>
+<div class="paragraph">
+<p>This is a first step in micro-services migration process.
+First of all we need create entry point of our future system&#8201;&#8212;&#8201;application gateway.
+Gateway will forward any requests to proper services of your system.</p>
+</div>
+<div class="paragraph">
+<p>Gateway server is using port: 8002</p>
+</div>
+<div class="listingblock">
+<div class="title">gateway routes configuration:</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">  <span class="directive">final</span> PropsAutoConfiguration.Props props;
+
+  <span class="annotation">@Bean</span>
+  RouteLocator msRouteLocator(RouteLocatorBuilder builder) {
+    <span class="keyword">return</span> builder
+        .routes()
+
+        <span class="comment">/*
+        // step 1.1: forward everything to monolith app
+        .route(&quot;monolith&quot;, p -&gt; p
+            .path(&quot;/**&quot;)
+            .uri(props.getMonolith().getUrl()))
+        */</span>
+
+        <span class="comment">// step 1.2: oops, gateway actuator endpoints should respond by themselves, but not with monolith's...</span>
+        .route(<span class="string"><span class="delimiter">&quot;</span><span class="content">self-actuator</span><span class="delimiter">&quot;</span></span>, p -&gt; p
+            .path(<span class="string"><span class="delimiter">&quot;</span><span class="content">/actuator/**</span><span class="delimiter">&quot;</span></span>)
+            .negate()
+            .uri(props.getMonolith().getUrl()))
+
+        .build();
+  }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>this configuration shows how we can forward every request to monolith (except itself actuator requests)</p>
+</div>
 </div>
 </div>
 </div>
@@ -653,7 +736,7 @@ bash build/libs/monolith/*.jar
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1<br>
-Last updated 2018-06-21 01:52:28 UTC
+Last updated 2018-06-22 01:07:04 UTC
 </div>
 </div>
 </body>
