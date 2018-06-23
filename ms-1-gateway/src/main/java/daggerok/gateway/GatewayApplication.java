@@ -24,9 +24,11 @@ class GatewayRoutesConfig {
   final PropsAutoConfiguration.Props props;
 
   @Bean
-  RouteLocator msRouteLocator(RouteLocatorBuilder builder) {
+  RouteLocator msRouteLocator(final RouteLocatorBuilder builder) {
     return builder
         .routes()
+
+        // step 5: after step 4 migration is done. monolithic app at this point of time could be completely disabled.
 
         // step 4: forward rest api calls to ms-3-rest micro-service
         .route("ms-3-rest", p -> p
@@ -39,17 +41,19 @@ class GatewayRoutesConfig {
             .negate()
             .uri(props.getUi().getUrl()))
 
-        /* // monolithic app at this point of time could be completely disabled - after step 4 migration is done.
-        // step 1: forward everything to monolith app
-        .route("monolith", p -> p
-            .path("/**")
-            .uri(props.getMonolith().getUrl()))
+        /*
 
         // step 2: oops, gateway actuator endpoints should respond by themselves, but not with monolith's...
         .route("self-actuator", p -> p
             .path("/actuator/**")
             .negate()
             .uri(props.getMonolith().getUrl()))
+
+        // step 1: forward everything to monolith app
+        .route("monolith", p -> p
+            .path("/**")
+            .uri(props.getMonolith().getUrl()))
+
         */
 
         .build();
