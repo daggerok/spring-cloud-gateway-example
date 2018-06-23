@@ -559,7 +559,7 @@ table.CodeRay td.code>pre{padding:0}
 <span id="author" class="author">Maksim Kostromin</span><br>
 <span id="email" class="email"><a href="mailto:daggerok@gmail.com">daggerok@gmail.com</a></span><br>
 <span id="revnumber">version 0.0.1,</span>
-<span id="revdate">2018-06-22 18:43:49 UTC</span>
+<span id="revdate">2018-06-23 15:47:14 UTC</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -700,9 +700,11 @@ Gateway will forward any requests to proper services of your system.</p>
 <pre class="CodeRay highlight"><code data-lang="java">  <span class="directive">final</span> PropsAutoConfiguration.Props props;
 
   <span class="annotation">@Bean</span>
-  RouteLocator msRouteLocator(RouteLocatorBuilder builder) {
+  RouteLocator msRouteLocator(<span class="directive">final</span> RouteLocatorBuilder builder) {
     <span class="keyword">return</span> builder
         .routes()
+
+        <span class="comment">// step 5: after step 4 migration is done. monolithic app at this point of time could be completely disabled.</span>
 
         <span class="comment">// step 4: forward rest api calls to ms-3-rest micro-service</span>
         .route(<span class="string"><span class="delimiter">&quot;</span><span class="content">ms-3-rest</span><span class="delimiter">&quot;</span></span>, p -&gt; p
@@ -715,17 +717,19 @@ Gateway will forward any requests to proper services of your system.</p>
             .negate()
             .uri(props.getUi().getUrl()))
 
-        <span class="comment">/* // monolithic app at this point of time could be completely disabled - after step 4 migration is done.
-        // step 1: forward everything to monolith app
-        .route(&quot;monolith&quot;, p -&gt; p
-            .path(&quot;/**&quot;)
-            .uri(props.getMonolith().getUrl()))
+        <span class="comment">/*
 
         // step 2: oops, gateway actuator endpoints should respond by themselves, but not with monolith's...
         .route(&quot;self-actuator&quot;, p -&gt; p
             .path(&quot;/actuator/**&quot;)
             .negate()
             .uri(props.getMonolith().getUrl()))
+
+        // step 1: forward everything to monolith app
+        .route(&quot;monolith&quot;, p -&gt; p
+            .path(&quot;/**&quot;)
+            .uri(props.getMonolith().getUrl()))
+
         */</span>
 
         .build();
@@ -935,7 +939,7 @@ We gonna split webflux rest api from monolith into separate service.</p>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1<br>
-Last updated 2018-06-22 18:43:49 UTC
+Last updated 2018-06-23 15:47:14 UTC
 </div>
 </div>
 </body>
