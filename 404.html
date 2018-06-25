@@ -559,7 +559,7 @@ table.CodeRay td.code>pre{padding:0}
 <span id="author" class="author">Maksim Kostromin</span><br>
 <span id="email" class="email"><a href="mailto:daggerok@gmail.com">daggerok@gmail.com</a></span><br>
 <span id="revnumber">version 0.0.1,</span>
-<span id="revdate">2018-06-23 15:47:14 UTC</span>
+<span id="revdate">2018-06-25 05:45:48 UTC</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -597,19 +597,8 @@ table.CodeRay td.code>pre{padding:0}
 <div class="paragraph">
 <p>Read <a href="https://daggerok.github.io/spring-cloud-gateway-example">reference documentation</a> for details</p>
 </div>
-<div class="listingblock">
-<div class="title">gradle</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">./gradlew
-java -jar build/monolith/libs/*.jar
-bash build/libs/monolith/*.jar
-
-./gradlew build composeUp
-./gradlew composeDown</code></pre>
-</div>
-</div>
 <div class="paragraph">
-<p>links:</p>
+<p>some links:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -697,7 +686,7 @@ Gateway will forward any requests to proper services of your system.</p>
 <div class="listingblock">
 <div class="title">gateway routes configuration:</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">  <span class="directive">final</span> PropsAutoConfiguration.Props props;
+<pre class="CodeRay highlight"><code data-lang="java">  <span class="directive">final</span> Props props;
 
   <span class="annotation">@Bean</span>
   RouteLocator msRouteLocator(<span class="directive">final</span> RouteLocatorBuilder builder) {
@@ -712,7 +701,7 @@ Gateway will forward any requests to proper services of your system.</p>
             .uri(props.getRest().getUrl()))
 
         <span class="comment">// step 3: everything else (except itself gateway actuator endpoints) forward to ms-2-ui micro-service</span>
-        .route(<span class="string"><span class="delimiter">&quot;</span><span class="content">self-actuator</span><span class="delimiter">&quot;</span></span>, p -&gt; p
+        .route(<span class="string"><span class="delimiter">&quot;</span><span class="content">ms-2-ui</span><span class="delimiter">&quot;</span></span>, p -&gt; p
             .path(<span class="string"><span class="delimiter">&quot;</span><span class="content">/actuator/**</span><span class="delimiter">&quot;</span></span>)
             .negate()
             .uri(props.getUi().getUrl()))
@@ -720,13 +709,13 @@ Gateway will forward any requests to proper services of your system.</p>
         <span class="comment">/*
 
         // step 2: oops, gateway actuator endpoints should respond by themselves, but not with monolith's...
-        .route(&quot;self-actuator&quot;, p -&gt; p
+        .route(&quot;ms-1-gateway&quot;, p -&gt; p
             .path(&quot;/actuator/**&quot;)
             .negate()
             .uri(props.getMonolith().getUrl()))
 
         // step 1: forward everything to monolith app
-        .route(&quot;monolith&quot;, p -&gt; p
+        .route(&quot;ms-0-monolith&quot;, p -&gt; p
             .path(&quot;/**&quot;)
             .uri(props.getMonolith().getUrl()))
 
@@ -784,7 +773,7 @@ Gateway will forward any requests to proper services of your system.</p>
 
   <span class="annotation">@Bean</span>
   WebClient webClient() {
-    <span class="keyword">return</span> WebClient.create(props.getMonolith().getUrl());
+    <span class="keyword">return</span> WebClient.create(props.getGateway().getUrl());
   }
 
   <span class="annotation">@Bean</span>
@@ -939,7 +928,7 @@ We gonna split webflux rest api from monolith into separate service.</p>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1<br>
-Last updated 2018-06-23 15:47:14 UTC
+Last updated 2018-06-25 05:45:48 UTC
 </div>
 </div>
 </body>
