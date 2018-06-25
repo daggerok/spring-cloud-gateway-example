@@ -1,0 +1,62 @@
+version: '2.1'
+
+services:
+
+  gateway:
+    restart: unless-stopped
+    build:
+      context: ./ms-1-gateway
+      dockerfile: ./Dockerfile
+    volumes: ['gateway-data:/home/appuser']
+    ports: ['8002:8002']
+    environment:
+      PROPS_REST_HOST: 'rest'
+      PROPS_UI_HOST: 'ui'
+    networks:
+      public-net:
+        aliases:
+          - g
+          - gateway
+
+  ui:
+    restart: unless-stopped
+    build:
+      context: ./ms-2-ui
+      dockerfile: ./Dockerfile
+    volumes: ['ui-data:/home/appuser']
+    ports: ['8003:8003']
+    depends_on:
+      gateway:
+        condition: service_healthy
+    links: ['gateway:gateway']
+    environment:
+      PROPS_GATEWAY_HOST: 'gateway'
+    networks:
+      public-net:
+        aliases:
+          - u
+          - ui
+
+  rest:
+    restart: unless-stopped
+    build:
+      context: ./ms-3-rest
+      dockerfile: ./Dockerfile
+    volumes: ['rest-data:/home/appuser']
+    ports: ['8004:8004']
+    depends_on:
+      gateway:
+        condition: service_healthy
+    networks:
+      public-net:
+        aliases:
+          - r
+          - rest
+
+volumes:
+  gateway-data: {}
+  ui-data: {}
+  rest-data: {}
+
+networks:
+  public-net:
