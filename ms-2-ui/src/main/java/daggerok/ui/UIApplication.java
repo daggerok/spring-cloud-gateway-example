@@ -18,7 +18,8 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 
 import java.util.Map;
 
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RouterFunctions.resources;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -47,7 +48,7 @@ class RestApiProxyConfig {
 
   @Bean
   WebClient webClient() {
-    return WebClient.create(props.getMonolith().getUrl());
+    return WebClient.create(props.getGateway().getUrl());
   }
 
   @Bean

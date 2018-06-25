@@ -1,11 +1,14 @@
 service:
 - docker
+
 env:
   global:
   - TERM=dumb
   - secure: fbt09y7oW/qr2gt7rRx5mYp7N0guNlq4H0hv/i+vegXaBuAKlMkEGPEzmpjW8tgCRQJi/CXpAOuRcWE+JMWXQ0boMdk3fQNQ884QBXj9WVGpZjDBiLXeFD6yztaU57XPwDqXvSHZpVElu00DWpsgk5vuSrK2l/0OohHtQ32q+nXZSZzBlWbxFaMdep4v4LRH9kRD2D84Mub+fkrKSjuA+qlktp5wk+Lv77qB3I6h3OB4XmyA+O6kXJrYszii78x6Yf5RpcZLbUFbshJPOdj0GTpERW1tXMPVkIgYedUZ+jhGwcCHnk0N6L3kUYcSK+ZA/IgFKyC0ea2i5azODgheGIe0lMOrai5ndlgSTvyNj8GVbzTUeY2rOwZ6H52obpvVpDR64DtJPx8h6oj945OED0Aw1dzm6l1PAGvBePIuc3wa99UHkQPOSqab626Y0NRfrY7IDg4nFBLLhNvLbrCmU28pQLKracgl7m6/E8oB/IzdTTcKb1DQFldqPTHPafrWZyDxD0Sv14OcHM8A83C7LEvhPc3R8J459vExoGKZN6f45/JjBN+NlQP8bZ629oY9ZkbWLM1t5UqQ96trSXX2qpJRa75kF2lmsy7k+fvfnnZK38O34eE1sZhF32OQZGKudlwW4xrJdwpA1nbu8RrnTLZfGgyAERR8OMvmpffriww=
+
 language: java
 jdk: oraclejdk8
+
 apt:
   update: true
   packages:
@@ -16,13 +19,13 @@ apt:
   - libxml2-utils
   - docker-ce
   - python-pip
+
 install: true
 before_script:
 - sudo pip install docker-compose httpie >/dev/null 2>&1
 - source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
-- stop_any 80 8001 8002
+- stop_any 80 8001 8002 8003 8004
 
-script:
 script:
 
 # build
@@ -34,7 +37,7 @@ script:
 #- http :8001
 #- http :8001/api/
 #- http :8001/api/contents
-#- stop_any 8001 80
+#- stop_any 8001
 #
 ## run and test monolith app using bash
 #- bash ./ms-0-monolith/build/libs/*-0.0.1.jar &
@@ -42,7 +45,7 @@ script:
 #- http :8001
 #- http :8001/api/
 #- http :8001/api/contents
-#- stop_any 8001 80
+#- stop_any 8001
 
 # run and test monolith+gateway apps using java -jar
 - java -jar ./ms-0-monolith/build/libs/*-0.0.1.jar &
@@ -66,7 +69,7 @@ script:
 - http :8004/actuator/health
 - http :8004/api/contents
 - http :8004/api/
-- stop_any 8001 8002 8003 8004 80
+- stop_any 8001 8002 8003 8004
 
 # run and test monolith+gateway apps using bash
 - bash ./ms-0-monolith/build/libs/*-0.0.1.jar &
@@ -90,9 +93,9 @@ script:
 - http :8004/actuator/health
 - http :8004/api/contents
 - http :8004/api/
-- stop_any 8001 8002 8003 8004 80
+- stop_any 8001 8002 8003 8004
 
-# run and test monolith+gateway apps using docker-compose gradle task
+# run and test monolith+ms apps using docker-compose gradle task
 - bash gradlew assemble composeUp
 - wait_for 8001 8002 8003 8004
 - http :8001/
@@ -112,9 +115,28 @@ script:
 - http :8004/api/contents
 - http :8004/api/
 - bash gradlew composeDown
-- stop_any 8001 8002 8003 8004 80
+- stop_any 8001 8002 8003 8004
+
+# run and test gateway apps using docker-compose gradle task
+- ./gradlew composeUp -Pprofile=ms
+- wait_for 8002 8003 8004
+- http :8002/
+- http :8002/actuator/health
+- http :8002/api/
+- http :8002/api/contents
+- http :8003/
+- http :8003/actuator/health
+- http :8003/api/contents
+- http :8003/api/
+- http :8004/
+- http :8004/actuator/health
+- http :8004/api/contents
+- http :8004/api/
+-  ./gradlew composeDown -Pprofile=ms
+- stop_any 8002 8003 8004
 
 before_deploy: "./gradlew documentation"
+
 deploy:
   provider: pages
   skip-cleanup: true
@@ -129,6 +151,7 @@ before_cache:
 - sudo rm -rf $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
 - sudo rm -rf $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
 - sudo rm -rf $HOME/.gradle/caches/modules-2/modules-2.lock
+
 cache:
   directories:
   - ".gradle"

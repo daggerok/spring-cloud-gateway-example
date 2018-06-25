@@ -1,6 +1,7 @@
 package daggerok.gateway;
 
 import daggerok.props.PropsAutoConfiguration;
+import daggerok.props.PropsAutoConfiguration.Props;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.SpringApplication;
@@ -21,7 +22,7 @@ class GatewayRoutesConfig {
 
   //@formatter:off
   //tag::content[]
-  final PropsAutoConfiguration.Props props;
+  final Props props;
 
   @Bean
   RouteLocator msRouteLocator(final RouteLocatorBuilder builder) {
@@ -36,7 +37,7 @@ class GatewayRoutesConfig {
             .uri(props.getRest().getUrl()))
 
         // step 3: everything else (except itself gateway actuator endpoints) forward to ms-2-ui micro-service
-        .route("self-actuator", p -> p
+        .route("ms-2-ui", p -> p
             .path("/actuator/**")
             .negate()
             .uri(props.getUi().getUrl()))
@@ -44,13 +45,13 @@ class GatewayRoutesConfig {
         /*
 
         // step 2: oops, gateway actuator endpoints should respond by themselves, but not with monolith's...
-        .route("self-actuator", p -> p
+        .route("ms-1-gateway", p -> p
             .path("/actuator/**")
             .negate()
             .uri(props.getMonolith().getUrl()))
 
         // step 1: forward everything to monolith app
-        .route("monolith", p -> p
+        .route("ms-0-monolith", p -> p
             .path("/**")
             .uri(props.getMonolith().getUrl()))
 

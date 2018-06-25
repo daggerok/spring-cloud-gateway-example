@@ -1,7 +1,7 @@
 import './index.styl';
 import React from 'react';
 import { render } from 'react-dom';
-import { Link, Route, BrowserRouter, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter, Link, Redirect, Route, Switch } from 'react-router-dom';
 import { Posts } from './components/posts/posts';
 import { Contents } from './components/contents/contents';
 

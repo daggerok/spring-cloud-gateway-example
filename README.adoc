@@ -5,7 +5,6 @@ image:https://travis-ci.org/daggerok/spring-cloud-gateway-example.svg?branch=mas
 image:https://gitlab.com/daggerok/spring-cloud-gateway-example/badges/master/build.svg["Build Status", link="https://gitlab.com/daggerok/spring-cloud-gateway-example/-/jobs"]
 image:https://img.shields.io/bitbucket/pipelines/daggerok/spring-cloud-gateway-example.svg["Build Status", link="https://bitbucket.com/daggerok/spring-cloud-gateway-example"]
 ////
-In progress...
 
 //tag::content[]
 
@@ -13,6 +12,7 @@ __Migrate monolithic app into micro-services with awesome Spring projects!__
 
 Read link:https://daggerok.github.io/spring-cloud-gateway-example[reference documentation] for details
 
+////
 .gradle
 [source,bash]
 ----
@@ -23,8 +23,9 @@ bash build/libs/monolith/*.jar
 ./gradlew build composeUp
 ./gradlew composeDown
 ----
+////
 
-links:
+some links:
 
 - link:http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/mapping.html#d0e5294[additional hibernate generators]
 - link:https://www.youtube.com/watch?v=pSLDLAh8szc[Thymeleaf getting ready for Reactive Spring 5]

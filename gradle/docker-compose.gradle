@@ -4,7 +4,8 @@ def profile = ''
 if (project.hasProperty('profile')) {
   profile = project.property('profile') ?: ''
   if (!profile.trim().isEmpty()) {
-    dockerComposeFile = dockerComposeFile.replace('.yaml', "-${profile}.yaml")
+    def path = dockerComposeFile.absolutePath.replace('.yaml', "-${profile}.yaml")
+    dockerComposeFile = project.file(path)
   }
 }
 
